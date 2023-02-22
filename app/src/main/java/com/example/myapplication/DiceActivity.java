@@ -1,31 +1,38 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.security.SecureRandom;
 
 public class DiceActivity extends AppCompatActivity {
     private ImageView dice;
+    private TextView affiche;
     private Button roll;
     private TextView money;
     private TextView count;
     private Animation anim,anim1;
     int n=0;
     int value=0;
+    int j=0;
     int imgArr[] = new int[]{
             R.mipmap.dice_1,
             R.mipmap.dice_2,
@@ -41,6 +48,7 @@ public class DiceActivity extends AppCompatActivity {
         dice= (ImageView) findViewById(R.id.dice);
         roll =(Button) findViewById(R.id.roll);
         money=(TextView) findViewById(R.id.money);
+        affiche=(TextView) findViewById(R.id.affiche);
         count=(TextView) findViewById(R.id.count);
         anim = AnimationUtils.loadAnimation(this,R.anim.set);
         anim1 = AnimationUtils.loadAnimation(this,R.anim.rotate);
@@ -59,8 +67,8 @@ public class DiceActivity extends AppCompatActivity {
                 handler.postDelayed(new Runnable(){
                     public void run() {
 
-                        int i=random.nextInt(n);
-                        dice.setImageResource(imgArr[i]);
+                        //int i=random.nextInt(n);
+                        dice.setImageResource(imgArr[n]);
 
                         dice.startAnimation(anim1);
                         handler.postDelayed(this, 500);
@@ -123,6 +131,36 @@ public class DiceActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater=getMenuInflater();
         inflater.inflate(R.menu.main_menu,menu);
-        return super.onCreateOptionsMenu(menu);
+        MenuItem item = menu.findItem(R.id.my_switch_item);
+        item.setActionView(R.layout.switch_item);
+
+        Switch mySwitch = item.getActionView().findViewById(R.id.id_switch);
+        mySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                MenuItem next= menu.findItem(R.id.next);
+
+                MenuItem prev= menu.findItem(R.id.previous);
+                 if (isChecked){
+                     next.setEnabled(false);
+                     prev.setEnabled(false);
+                 }else {
+                     next.setEnabled(true);
+                     prev.setEnabled(true);
+                 }
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.next:j++;affiche.setText(" "+j);break;
+            case R.id.previous:j--;affiche.setText(" "+j);break;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
